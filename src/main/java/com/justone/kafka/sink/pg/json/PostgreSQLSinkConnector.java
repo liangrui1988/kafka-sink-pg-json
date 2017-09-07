@@ -29,6 +29,13 @@ package com.justone.kafka.sink.pg.json;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+
+import org.apache.kafka.common.config.Config;
+import org.apache.kafka.common.config.ConfigDef;
+import org.apache.kafka.common.config.ConfigValue;
+import org.apache.kafka.common.config.ConfigDef.Importance;
+import org.apache.kafka.common.config.ConfigDef.Type;
 import org.apache.kafka.connect.connector.ConnectorContext;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.sink.SinkConnector;
@@ -126,5 +133,20 @@ public class PostgreSQLSinkConnector extends SinkConnector {
       return configurations;//return task configurations
       
   }//taskConfigs()
+
+  private static final ConfigDef CONFIG_DEF = new ConfigDef()
+			.define("db.host", Type.STRING, Importance.LOW, "The db.host to publish data to");
+
+	@Override
+	public ConfigDef config() {
+		return CONFIG_DEF;
+	}
+	
+	@Override
+	public Config validate(Map<String, String> connectorConfigs) {
+      ConfigDef configDef = config();
+      List<ConfigValue> configValues = configDef.validate(connectorConfigs);
+      return new Config(configValues);
+	}
 
 }//PostgreSQLSinkConnector{}
